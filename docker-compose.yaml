@@ -1,0 +1,26 @@
+services:
+  redmine:
+    image: redmine:6.0.2
+    restart: unless-stopped
+    ports:
+      - 8085:3000
+    environment:
+      REDMINE_DB_MYSQL: db
+      REDMINE_DB_PASSWORD: ${REDMINE_DB_PASSWORD}
+      REDMINE_SECRET_KEY_BASE: ${REDMINE_SECRET_KEY_BASE}
+      REDMINE_PLUGINS_MIGRATE: true
+      http_proxy: ${CORPORATE_HTTP_PROXY}
+      https_proxy: ${CORPORATE_HTTPS_PROXY}
+    volumes:
+      - ./uploaded-files:/usr/src/redmine/files
+      - ./plugins:/usr/src/redmine/plugins
+      - ./themes:/usr/src/redmine/public/themes
+
+  db:
+    image: mysql:9.2.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${REDMINE_DB_PASSWORD}
+      MYSQL_DATABASE: redmine
+    volumes:
+      - ./mysql-data:/var/lib/mysql
